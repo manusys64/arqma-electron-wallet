@@ -15,6 +15,10 @@ export class Block {
       this.address = pool.config.mining.address
       this.reserved_offset = template.reserved_offset
       this.buffer = Buffer.from(template.blocktemplate_blob, "hex")
+      // The clientNonceLocation is the location at which the client pools should set the nonces for each of their clients.
+      this.clientNonceLocation = this.reserveOffset + 12;
+      // The clientPoolLocation is for multi-thread/multi-server pools to handle the nonce for each of their tiers.
+      this.clientPoolLocation = this.reserveOffset + 8;
 
         if(uniform) {
             /* Uniform mode
