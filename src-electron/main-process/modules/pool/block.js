@@ -45,7 +45,7 @@ export class Block {
             return this.convertBlob()
         }
     }
-    convertBlob(isProxy = false) {
+    convertBlob() {
         try {
             return this.pool.core_bridge.convert_blob(this.buffer.toString("hex"))
         } catch(e) {
