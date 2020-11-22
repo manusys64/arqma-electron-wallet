@@ -132,6 +132,7 @@ export class Miner {
     }
 
     getJob(force=false) {
+        let cachedJob = {}
         try {
             const block = this.pool.blocks.current
             let job_id = "", blob = "", target = "", seed_hash = "", next_seed_hash = "", difficulty = ""
@@ -170,7 +171,6 @@ export class Miner {
                     this.jobs.shift()
                 }
             }
-            let cachedJob = {}
             if (this.isProxy){
                 cachedJob = {blocktemplate_blob: blob, 
                              difficulty: difficulty,
