@@ -170,17 +170,21 @@ export class Miner {
             }
         }
         let cachedJob = {}
-        if (this.isProxy){
-            cachedJob = {blocktemplate_blob: blob, 
-                         difficulty: difficulty,
-                         height: block.height,
-                         reserved_offset: block.reserved_offset,
-                         clientPoolLocation: block.clientPoolLocation,
-                         clientNonceLocation: block.clientNonceLocation,
-                         target_diff: target,
-                         target_diff_hex: target.toString(16) }
-        } else {
-            cachedJob = { blob, job_id, target, seed_hash, next_seed_hash }
+        try {
+            if (this.isProxy){
+                cachedJob = {blocktemplate_blob: blob, 
+                             difficulty: difficulty,
+                             height: block.height,
+                             reserved_offset: block.reserved_offset,
+                             clientPoolLocation: block.clientPoolLocation,
+                             clientNonceLocation: block.clientNonceLocation,
+                             target_diff: target,
+                             target_diff_hex: target.toString(16) }
+            } else {
+                cachedJob = { blob, job_id, target, seed_hash, next_seed_hash }
+            }
+        } catch (error) {
+            console.log(error, '<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
         }
         return cachedJob
     }
