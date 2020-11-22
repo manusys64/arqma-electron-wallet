@@ -35,7 +35,7 @@ export class Block {
 
         if (isProxy) {
             this.extra_nonce = this.extra_nonce % 256
-            this.buffer.writeUInt32BE(extra_nonce, this.template.reserved_offset)
+            this.buffer.writeUInt32BE(extra_nonce, this.reserved_offset)
             return this.buffer.toString('hex')
         } else {
             if(!this.uniform) {
