@@ -33,15 +33,24 @@ export class Block {
     newBlob(isProxy = false) {
         this.extra_nonce++
 
-        if (isProxy) {
+        // if (isProxy) {
+        //     this.extra_nonce = this.extra_nonce % 256
+        //     this.buffer.writeUInt32BE(this.extra_nonce, this.reserved_offset)
+        //     return this.buffer.toString('hex')
+        // } else {
+        //     if(!this.uniform) {
+        //         this.extra_nonce = this.extra_nonce % 256
+        //     }
+        //     this.writeExtraNonce(this.extra_nonce)
+        //     return this.convertBlob()
+        // }
+        if(!this.uniform) {
             this.extra_nonce = this.extra_nonce % 256
-            this.buffer.writeUInt32BE(this.extra_nonce, this.reserved_offset)
+        }
+        this.writeExtraNonce(this.extra_nonce)
+        if (isProxy) {
             return this.buffer.toString('hex')
         } else {
-            if(!this.uniform) {
-                this.extra_nonce = this.extra_nonce % 256
-            }
-            this.writeExtraNonce(this.extra_nonce)
             return this.convertBlob()
         }
     }
