@@ -132,45 +132,45 @@ export class Miner {
     }
 
     getJob(force=false) {
-        const block = this.pool.blocks.current
-        let job_id = "", blob = "", target = "", seed_hash = "", next_seed_hash = "", difficulty = ""
-        if(block.height != this.lastHeight || this.difficulty.pending || force) {
-            this.lastHeight = block.height
-            if(this.difficulty.pending) {
-                this.difficulty = {
-                    now: this.difficulty.pending,
-                    pending: null,
-                    last: this.difficulty.now
+        try {
+            const block = this.pool.blocks.current
+            let job_id = "", blob = "", target = "", seed_hash = "", next_seed_hash = "", difficulty = ""
+            if(block.height != this.lastHeight || this.difficulty.pending || force) {
+                this.lastHeight = block.height
+                if(this.difficulty.pending) {
+                    this.difficulty = {
+                        now: this.difficulty.pending,
+                        pending: null,
+                        last: this.difficulty.now
+                    }
+                }
+
+                difficulty = Math.min(this.difficulty.now, block.difficulty-1)
+
+                job_id = uid()
+                blob = block.newBlob(this.isProxy)
+                target = this.targetToCompact(difficulty)
+                seed_hash = block.seed_hash
+                next_seed_hash = block.next_seed_hash
+                let newJob = {
+                    id: job_id,
+                    extra_nonce: block.extra_nonce,
+                    height: block.height,
+                    difficulty: difficulty,
+                    submissions: [],
+                    seed_hash: block.seed_hash,
+                    next_seed_hash: block.next_seed_hash
+                }
+                if (this.isProxy) {
+                    Object.assign(newJob, {clientPoolLocation: block.clientPoolLocation,
+                                        clientNonceLocation: block.clientNonceLocation})
+                }
+                this.addJob(newJob)
+                while(this.jobs.length > 4) {
+                    this.jobs.shift()
                 }
             }
-
-            difficulty = Math.min(this.difficulty.now, block.difficulty-1)
-
-            job_id = uid()
-            blob = block.newBlob(this.isProxy)
-            target = this.targetToCompact(difficulty)
-            seed_hash = block.seed_hash
-            next_seed_hash = block.next_seed_hash
-            let newJob = {
-                id: job_id,
-                extra_nonce: block.extra_nonce,
-                height: block.height,
-                difficulty: difficulty,
-                submissions: [],
-                seed_hash: block.seed_hash,
-                next_seed_hash: block.next_seed_hash
-            }
-            if (this.isProxy) {
-                Object.assign(newJob, {clientPoolLocation: block.clientPoolLocation,
-                                       clientNonceLocation: block.clientNonceLocation})
-            }
-            this.addJob(newJob)
-            while(this.jobs.length > 4) {
-                this.jobs.shift()
-            }
-        }
-        let cachedJob = {}
-        try {
+            let cachedJob = {}
             if (this.isProxy){
                 cachedJob = {blocktemplate_blob: blob, 
                              difficulty: difficulty,
