@@ -35,12 +35,12 @@ export class Block {
         }
     }
     newBlob(isProxy = false) {
-        this.extra_nonce++
-
+        
         if (isProxy) {       
             this.buffer_new.writeUInt32BE(++this.extra_nonce, this.reserved_offset);
             return this.buffer_new.toString('hex')
         } else {
+            this.extra_nonce++
             if(!this.uniform) {
                 this.extra_nonce = this.extra_nonce % 256
             }
