@@ -13,8 +13,8 @@ export class Block {
       this.height = template.height
       this.difficulty = template.difficulty
       this.address = pool.config.mining.address
-
-        this.buffer = Buffer.from(template.blocktemplate_blob, "hex")
+      this.reserved_offset = template.reserved_offset
+      this.buffer = Buffer.from(template.blocktemplate_blob, "hex")
 
         if(uniform) {
             /* Uniform mode
@@ -26,15 +26,22 @@ export class Block {
             randomBytes(4).copy(this.buffer, template.reserved_offset + 4)
         }
     }
-    newBlob() {
+    newBlob(isProxy = false) {
         this.extra_nonce++
-        if(!this.uniform) {
+
+        if (isProxy) {
             this.extra_nonce = this.extra_nonce % 256
+            buffer.writeUInt32BE(extra_nonce, this.template.reserved_offset)
+            return this.buffer.toString('hex')
+        } else {
+            if(!this.uniform) {
+                this.extra_nonce = this.extra_nonce % 256
+            }
+            this.writeExtraNonce(this.extra_nonce)
+            return this.convertBlob()
         }
-        this.writeExtraNonce(this.extra_nonce)
-        return this.convertBlob()
     }
-    convertBlob() {
+    convertBlob(isProxy = false) {
         try {
             return this.pool.core_bridge.convert_blob(this.buffer.toString("hex"))
         } catch(e) {

@@ -1,12 +1,14 @@
+import objectAssignDeep from "object-assign-deep"
 import { diff1, uid, logger } from "./utils"
 
 export class Miner {
-    constructor(pool, id, workerName, varDiff, ip, socket) {
+    constructor(pool, id, workerName, varDiff, ip, socket, isProxy = false) {
         this.pool = pool
         this.id = id
         this.workerName = workerName
         this.ip = ip
         this.socket = socket
+        this.isProxy = isProxy
 
         this.varDiff = varDiff
         this.difficulty = {
@@ -145,11 +147,11 @@ export class Miner {
             let difficulty = Math.min(this.difficulty.now, block.difficulty-1)
 
             job_id = uid()
-            blob = block.newBlob()
+            blob = block.newBlob(this.isProxy)
             target = this.targetToCompact(difficulty)
             seed_hash = block.seed_hash
             next_seed_hash = block.next_seed_hash
-            this.addJob({
+            let newJob = {
                 id: job_id,
                 extra_nonce: block.extra_nonce,
                 height: block.height,
@@ -157,12 +159,30 @@ export class Miner {
                 submissions: [],
                 seed_hash: block.seed_hash,
                 next_seed_hash: block.next_seed_hash
-            })
+            }
+            if (this.isProxy) {
+                Object.assign(newJob, {clientPoolLocation: block.clientPoolLocation,
+                                       clientNonceLocation: block.clientNonceLocation})
+            }
+            this.addJob(newJob)
             while(this.jobs.length > 4) {
                 this.jobs.shift()
             }
         }
-        return { blob, job_id, target, seed_hash, next_seed_hash }
+        let cachedJob = {}
+        if (this.isProxy){
+            cachedJob = {blocktemplate_blob: blob, 
+                         difficulty: this.difficulty,
+                         height: block.height,
+                         reserved_offset: block.reserved_offset,
+                         clientPoolLocation: block.clientPoolLocation,
+                         clientNonceLocation: block.clientNonceLocation,
+                         target_diff: target,
+                         target_diff_hex: target.toString(16) }
+        } else {
+            cachedJob = { blob, job_id, target, seed_hash, next_seed_hash }
+        }
+        return cachedJob
     }
 
     targetToCompact(diff) {

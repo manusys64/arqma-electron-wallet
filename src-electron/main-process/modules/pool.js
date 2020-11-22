@@ -491,7 +491,9 @@ export class Pool {
                     fixed
                 }
 
-                const newMiner = new Miner(this, connection_id, workerName, varDiff, ip, socket)
+                let isProxy = (params.agent && params.agent.includes('xmr-node-proxy'))
+
+                const newMiner = new Miner(this, connection_id, workerName, varDiff, ip, socket, isProxy)
 
                 this.connections[connection_id] = newMiner
                 this.database.addWorker(workerName)
@@ -524,6 +526,8 @@ export class Pool {
                 }
 
                 nonce = nonce.toLowerCase()
+
+                //TODO: need to do some proxy checking
 
                 if(!miner.checkJobSubmission(job, nonce)) {
                     return reply("Duplicate share")
