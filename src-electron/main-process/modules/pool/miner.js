@@ -176,8 +176,8 @@ export class Miner {
                              difficulty: difficulty,
                              height: block.height,
                              reserved_offset: block.reserved_offset,
-                             clientPoolLocation: block.clientPoolLocation,
-                             clientNonceLocation: block.clientNonceLocation,
+                             client_nonce_offset: block.clientNonceLocation,
+                             client_pool_offset: block.clientPoolLocation,
                              target_diff: target,
                              target_diff_hex: target.toString(16) }
             } else {
