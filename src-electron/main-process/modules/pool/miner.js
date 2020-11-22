@@ -133,7 +133,7 @@ export class Miner {
 
     getJob(force=false) {
         const block = this.pool.blocks.current
-        let job_id = "", blob = "", target = "", seed_hash = "", next_seed_hash = ""
+        let job_id = "", blob = "", target = "", seed_hash = "", next_seed_hash = "", difficulty = ""
         if(block.height != this.lastHeight || this.difficulty.pending || force) {
             this.lastHeight = block.height
             if(this.difficulty.pending) {
@@ -144,7 +144,7 @@ export class Miner {
                 }
             }
 
-            let difficulty = Math.min(this.difficulty.now, block.difficulty-1)
+            difficulty = Math.min(this.difficulty.now, block.difficulty-1)
 
             job_id = uid()
             blob = block.newBlob(this.isProxy)
@@ -172,7 +172,7 @@ export class Miner {
         let cachedJob = {}
         if (this.isProxy){
             cachedJob = {blocktemplate_blob: blob, 
-                         difficulty: this.difficulty,
+                         difficulty: difficulty,
                          height: block.height,
                          reserved_offset: block.reserved_offset,
                          clientPoolLocation: block.clientPoolLocation,

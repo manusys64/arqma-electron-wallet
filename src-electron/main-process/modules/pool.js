@@ -491,9 +491,7 @@ export class Pool {
                     fixed
                 }
 
-                console.log(params.agent, '<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
                 let isProxy = (params.agent && params.agent.includes('xmr-node-proxy'))
-
                 const newMiner = new Miner(this, connection_id, workerName, varDiff, ip, socket, isProxy)
 
                 this.connections[connection_id] = newMiner
