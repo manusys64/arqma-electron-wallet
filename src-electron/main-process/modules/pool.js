@@ -629,7 +629,7 @@ export class Pool {
 
     calculateBlockTemplateParameters() {
         return {wallet_address: this.config.mining.address,
-                reserve_size: 1 }
+                reserve_size: 17 }
     }
 
     addBlockAndInformMiners(data, force=false) {

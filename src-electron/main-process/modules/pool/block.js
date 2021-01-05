@@ -20,25 +20,22 @@ export class Block {
       // The clientPoolLocation is for multi-thread/multi-server pools to handle the nonce for each of their tiers.
       this.clientPoolLocation = this.reserved_offset + 8;
 
+      randomBytes(4).copy(this.buffer, this.r1 + 4, 0, 4)
 
-      this.buffer_new = Buffer.from(this.blockhashing_blob, 'hex');
-      randomBytes(4).copy(this.buffer_new, template.reserved_offset + 4)
-
-        if(uniform) {
-            /* Uniform mode
-             *   when enabled, we will mimic normal pool
-             *   set extra_nonce to random number between 0-31
-             *   also set "instanceID" to random four bytes
-             */
-            this.extra_nonce = randomBytes(1).readUInt8() % 32
-            randomBytes(4).copy(this.buffer, template.reserved_offset + 4)
-        }
+        // if(uniform) {
+        //     /* Uniform mode
+        //      *   when enabled, we will mimic normal pool
+        //      *   set extra_nonce to random number between 0-31
+        //      *   also set "instanceID" to random four bytes
+        //      */
+        //     this.extra_nonce = randomBytes(1).readUInt8() % 32
+        //     randomBytes(4).copy(this.buffer, template.reserved_offset + 4)
+        // }
     }
     newBlob(isProxy = false) {
-        
+        try {
         if (isProxy) {       
-            this.buffer_new.writeUInt32BE(++this.extra_nonce, this.reserved_offset);
-            return this.buffer_new.toString('hex')
+            return this.buffer.writeUInt32BE(++this.extra_nonce, this.reserved_offset).toString('hex')
         } else {
             this.extra_nonce++
             if(!this.uniform) {
@@ -47,6 +44,9 @@ export class Block {
             this.writeExtraNonce(this.extra_nonce)
             return this.convertBlob()
         }
+    }catch(error) {
+        console.log(error)
+    }
     }
     convertBlob() {
         try {

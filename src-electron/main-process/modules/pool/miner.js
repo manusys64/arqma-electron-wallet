@@ -172,14 +172,17 @@ export class Miner {
                 }
             }
             if (this.isProxy){
-                cachedJob = {blocktemplate_blob: blob, 
+                cachedJob = {job_id,
+                             blocktemplate_blob: blob, 
                              difficulty: difficulty,
                              height: block.height,
                              reserved_offset: block.reserved_offset,
                              client_nonce_offset: block.clientNonceLocation,
                              client_pool_offset: block.clientPoolLocation,
                              target_diff: target,
-                             target_diff_hex: target.toString(16) }
+                             target_diff_hex: target.toString(16),
+                             seed_hash,
+                             next_seed_hash }
             } else {
                 cachedJob = { blob, job_id, target, seed_hash, next_seed_hash }
             }
