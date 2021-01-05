@@ -20,7 +20,7 @@ export class Block {
       // The clientPoolLocation is for multi-thread/multi-server pools to handle the nonce for each of their tiers.
       this.clientPoolLocation = this.reserved_offset + 8;
 
-      randomBytes(4).copy(this.buffer, this.r1 + 4, 0, 4)
+      randomBytes(4).copy(this.buffer, this.reserved_offset + 4, 0, 4)
 
         // if(uniform) {
         //     /* Uniform mode
@@ -35,7 +35,8 @@ export class Block {
     newBlob(isProxy = false) {
         try {
         if (isProxy) {       
-            return this.buffer.writeUInt32BE(++this.extra_nonce, this.reserved_offset).toString('hex')
+            this.buffer.writeUInt32BE(++this.extra_nonce, this.reserved_offset)
+            return this.buffer.toString('hex')
         } else {
             this.extra_nonce++
             if(!this.uniform) {
